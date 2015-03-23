@@ -147,7 +147,8 @@
       heatMap.style("opacity", "1.0");
       if(hourDay.eventsCount > 0)
         d3.select(this).style("stroke", "black");
-
+      $(".title").removeClass("hidden");
+      
       var eventIdsForHourDay = hourDay.events;
       var categoryArray = buildCategoryCountsFor(eventIdsForHourDay);
 

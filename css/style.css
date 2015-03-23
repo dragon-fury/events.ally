@@ -26,6 +26,10 @@ text.axis-worktime {
   cursor: pointer;
 }
 
+.title {
+  text-align: center;
+}
+
 .heatMap {
   padding-top: 10px;
   text-align: center;
@@ -47,7 +51,7 @@ text.axis-worktime {
 
 .eventList {
   float: left;
-  height: 430px; 
+  height: 400px; 
   width: 750px;
   overflow-y: auto;
   padding: 5px;

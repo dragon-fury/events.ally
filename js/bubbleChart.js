@@ -9,9 +9,10 @@ var bubbleChart = (function() {
 
   var svg = d3.select(".bubbleChart").append("svg")
       .attr("width", width)
-      .attr("height", height)
-      .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+      .attr("height", height);
+
+  var element = svg.append("g")
+    .attr("transform", "translate(" + margin.left + "," + (margin.top+10) + ")");
 
   var constructLegend = function(svg, categoryLookUp, legendData, colors) {
     var legend = svg.selectAll(".legend")
@@ -43,10 +44,15 @@ var bubbleChart = (function() {
           xTranslate = 100,
           category_id = 0;
 
-      svg.selectAll(".bubble").remove();
-      svg.selectAll(".legend").remove();
+      element.selectAll(".bubble").remove();
+      element.selectAll(".legend").remove();
 
-      var bubble = svg.selectAll(".bubble")
+      svg.append("text")
+        .text("Event Types")
+        .attr("class", "title")
+        .attr("transform", "translate("+width/3+", 15)");
+
+      var bubble = element.selectAll(".bubble")
         .data(categoryArray)
         .enter().append("g")
           .attr("class", "bubble")
@@ -94,7 +100,7 @@ var bubbleChart = (function() {
         $(".category"+categoryIdToShow).removeClass("hidden");
       });
 
-      constructLegend(svg, categoryLookUp, categoryArray, colors);
+      constructLegend(element, categoryLookUp, categoryArray, colors);
     }
   };
 })();
