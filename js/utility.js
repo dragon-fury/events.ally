@@ -5,6 +5,13 @@ var utility  = (function() {
 		    return 0;
 		  }
 		  return categoryId;
+		},
+
+		handleNullValues: function(givenString) {
+			if(givenString === "null") {
+				return "NA";
+			}
+			return givenString;
 		}
 	};
 })();

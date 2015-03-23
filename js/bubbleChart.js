@@ -13,7 +13,7 @@ var bubbleChart = (function() {
       .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  var constructLegend = function(categoryLookUp, legendData) {
+  var constructLegend = function(svg, categoryLookUp, legendData) {
     var legend = svg.selectAll(".legend")
         .data(legendData)
         .enter().append("g")
@@ -82,7 +82,14 @@ var bubbleChart = (function() {
           .style("text-anchor", "middle")
           .text(function(category) { return category.count; });
 
-      constructLegend(categoryLookUp, categoryArray);
+      bubble.on("click", function(bubbleClicked){
+        var categoryIdToShow = utility.handleNullCategoryId(bubbleClicked.category_id);
+        $(".eventDetails").removeClass("hidden");
+        $(".eventDetails").addClass("hidden");
+        $(".category"+categoryIdToShow).removeClass("hidden");
+      });
+
+      constructLegend(svg, categoryLookUp, categoryArray);
     }
   };
 })();

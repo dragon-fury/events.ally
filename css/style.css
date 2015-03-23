@@ -44,3 +44,7 @@ text.axis-worktime {
   margin-bottom: 4px;
   padding: 5px;
 }
+
+.hidden {
+  display: none;
+}

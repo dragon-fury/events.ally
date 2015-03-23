@@ -7,18 +7,20 @@ var eventList = (function() {
 			.data(eventIds)
 			.enter()
 			.append("div")
-			.attr("categoryId", function(eventId){return eventObjects[eventId].category_id || 0})
-			.attr("class", "eventDetails")
+			.attr("class", function(eventId){
+				var categoryId = eventObjects[eventId].category_id || 0
+				return "eventDetails category"+categoryId;
+			})
 			.html(function(eventId){
 				var currentEvent = eventObjects[eventId];
 				var startDate = new Date(currentEvent.start.local);
 				var address = currentEvent.venue.address;
 
-				return "<p>Name: "+currentEvent.name.text+"</p>"+
-						"<p>Organizer: "+currentEvent.organizer.name+"</p>"+
-						"<p>Venue: "+address.address_1+", "+address.city+", "+address.region+"</p>"+
+				return "<p>Name: "+utility.handleNullValues(currentEvent.name.text)+"</p>"+
+						"<p>Organizer: "+utility.handleNullValues(currentEvent.organizer.name)+"</p>"+
+						"<p>Venue: "+utility.handleNullValues(address.address_1)+", "+utility.handleNullValues(address.city)+", "+utility.handleNullValues(address.region)+"</p>"+
 						"<p>Start time: "+startDate.toLocaleDateString()+" "+startDate.toLocaleTimeString()+"</p>"+
-						"<p>Event url: "+currentEvent.url+"</p>"
+						"<p>Event url: "+utility.handleNullValues(currentEvent.url)+"</p>"
 			});
 		}
 
