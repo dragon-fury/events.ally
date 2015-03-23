@@ -4,8 +4,8 @@ var bubbleChart = (function() {
       width = 760,
       height = 400,
       radius = 33,
-      colors = d3.scale.category20(),
-      legendElementSize = 14;
+      legendElementSize = 14,
+      last = null;
 
   var svg = d3.select(".bubbleChart").append("svg")
       .attr("width", width)
@@ -13,7 +13,7 @@ var bubbleChart = (function() {
       .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  var constructLegend = function(svg, categoryLookUp, legendData) {
+  var constructLegend = function(svg, categoryLookUp, legendData, colors) {
     var legend = svg.selectAll(".legend")
         .data(legendData)
         .enter().append("g")
@@ -29,15 +29,15 @@ var bubbleChart = (function() {
     legend.append("text")
       .attr("class", "mono axis-workweek")
       .text(function(category) {
-          category_id = utility.handleNullCategoryId(category.category_id);
-          return categoryLookUp[category_id]; 
+          return categoryLookUp[category.category_id]; 
       })
-      .attr("x", 20)
+      .style("font-size", "13px")
+      .attr("x", 18)
       .attr("y", function(d,i){return i*(legendElementSize+1)+(legendElementSize/1.5)});
   };
 
   return {
-    renderBubbleChart: function(categoryLookUp, categoryArray) {
+    renderBubbleChart: function(categoryLookUp, categoryArray, colors) {
 
       var yTranslate = -95, 
           xTranslate = 100,
@@ -62,8 +62,7 @@ var bubbleChart = (function() {
 
       bubble.append("title")
           .text(function(category) {
-            category_id = utility.handleNullCategoryId(category.category_id);
-            return categoryLookUp[category_id] + ": " + category.count; 
+            return categoryLookUp[category.category_id] + ": " + category.count; 
           });
 
       bubble.append("circle")
@@ -73,8 +72,7 @@ var bubbleChart = (function() {
       bubble.append("text")
           .style("text-anchor", "middle")
           .text(function(category) { 
-            category_id = utility.handleNullCategoryId(category.category_id);
-            return categoryLookUp[category_id].substring(0, 2);
+            return categoryLookUp[category.category_id].substring(0, 2);
           });
 
       bubble.append("text")
@@ -83,13 +81,20 @@ var bubbleChart = (function() {
           .text(function(category) { return category.count; });
 
       bubble.on("click", function(bubbleClicked){
+        if(last) {
+          last.style("stroke", "none");
+        }
+        last = d3.select(this);
+        bubble.style("opacity", "1.0");
+        d3.select(this).style("stroke", "black");
+
         var categoryIdToShow = utility.handleNullCategoryId(bubbleClicked.category_id);
         $(".eventDetails").removeClass("hidden");
         $(".eventDetails").addClass("hidden");
         $(".category"+categoryIdToShow).removeClass("hidden");
       });
 
-      constructLegend(svg, categoryLookUp, categoryArray);
+      constructLegend(svg, categoryLookUp, categoryArray, colors);
     }
   };
 })();

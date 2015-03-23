@@ -7,13 +7,15 @@
   var margin = { top: 50, right: 0, bottom: 100, left: 30 },
       width = 960,
       height = 430 - margin.top - margin.bottom,
-      blockSize = Math.floor((width - margin.left - margin.right) / 24),
+      blockSize = Math.floor((width - margin.left - margin.right) / 24) - 2,
       legendElementWidth = blockSize*2,
       buckets = 5,
-      colors = ["#ffffff","#ffffd9","#edf8b1","#c7e9b4","#7fcdbb","#41b6c4","#1d91c0","#225ea8","#253494","#081d58"], // alternatively colorbrewer.YlGnBu[9]
+      colors = ["#ffffff","#ffffd9","#edf8b1","#c7e9b4","#7fcdbb","#41b6c4","#1d91c0","#225ea8","#253494","#081d58"],
+      colorsForComponents = d3.scale.category20(),
       days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
       times = ["12am", "1am", "2am", "3am", "4am", "5am", "6am", "7am", "8am", "9am", "10am", "11am", 
-              "12pm", "1pm", "2pm", "3pm", "4pm", "5pm", "6pm", "7pm", "8pm", "9pm", "10pm", "11pm"];
+              "12pm", "1pm", "2pm", "3pm", "4pm", "5pm", "6pm", "7pm", "8pm", "9pm", "10pm", "11pm"],
+      last = null;
 
   categoryCollector.getCategoriesFromApi().done(function(data){
     data.categories.forEach(function(datum, index){
@@ -72,7 +74,7 @@
         categoryCount = {};
 
     events.forEach(function(singleEventId){
-      var category = eventsObject[singleEventId].category_id;
+      var category = utility.handleNullCategoryId(eventsObject[singleEventId].category_id);
       if(!categoryCount.hasOwnProperty(category))
         categoryCount[category] = 0;
       categoryCount[category]++;
@@ -125,8 +127,8 @@
     var heatMap = svg.selectAll(".hour")
         .data(data)
         .enter().append("rect")
-        .attr("x", function(hourDay) { return hourDay.hour * blockSize; })
-        .attr("y", function(hourDay) { return hourDay.day * blockSize; })
+        .attr("x", function(hourDay) { return hourDay.hour * (blockSize+2); })
+        .attr("y", function(hourDay) { return hourDay.day * (blockSize+2); })
         .attr("rx", 4)
         .attr("ry", 4)
         .attr("class", "hour bordered")
@@ -138,11 +140,19 @@
         .style("fill", function(hourDay) { return colorScale(hourDay.eventsCount); });
 
     heatMap.on("click", function(hourDay) {
+      if(last) {
+        last.style("stroke", "none");
+      }
+      last = d3.select(this);
+      heatMap.style("opacity", "1.0");
+      if(hourDay.eventsCount > 0)
+        d3.select(this).style("stroke", "black");
+
       var eventIdsForHourDay = hourDay.events;
       var categoryArray = buildCategoryCountsFor(eventIdsForHourDay);
 
-      bubbleChart.renderBubbleChart(categories, categoryArray);
-      eventList.populateEvents(eventsObject, eventIdsForHourDay);
+      bubbleChart.renderBubbleChart(categories, categoryArray, colorsForComponents);
+      eventList.populateEvents(eventsObject, eventIdsForHourDay, colorsForComponents);
     });
 
     heatMap.append("title").text(function(hourDay) { 
@@ -168,6 +178,7 @@
     legend.append("text")
       .attr("class", "mono axis-workweek")
       .text(function(d) { return "≥ " + Math.round(d); })
+      .style("font-size", "12px")
       .attr("x", function(d, i) { return legendElementWidth * i; })
       .attr("y", height + blockSize);
   });

@@ -18,6 +18,20 @@ text.axis-worktime {
   fill: #000;
 }
 
+.hour:hover {
+  cursor: pointer;
+}
+
+.bubble:hover {
+  cursor: pointer;
+}
+
+.heatMap {
+  padding-top: 10px;
+  text-align: center;
+  font-size: 20px;
+}
+
 .heatMap svg {
   display: block;
   margin-left: auto;
@@ -28,6 +42,7 @@ text.axis-worktime {
   float: left;
   width: 760px;
   height: 400px;
+  margin-left: 200px;
 }
 
 .eventList {
@@ -40,13 +55,13 @@ text.axis-worktime {
 
 .eventDetails {
   border: 1px inset #000;
-  margin-bottom: 4px;
-  border-radius: 20px;
   font-size: 15px;
+  margin-bottom: 5px;
 }
 
-.eventDetails > p {
-  padding-left: 20px;
+.eventDetails p {
+  padding-left: 15px;
+  padding-right: 10px;
 }
 
 .hidden {
@@ -54,10 +69,24 @@ text.axis-worktime {
 }
 
 .event-name {
+  padding-left: 15px;
+  padding-right: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
   font-size: 17px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.url-string {
+  background-color: #A0A0A0;
+  padding-left: 15px;
+  padding-right: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 
 .event-name .organizer {
   font-size: 12px;
-  color: gray;
+  font-weight: bold;
 }

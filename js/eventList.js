@@ -1,37 +1,31 @@
 var eventList = (function() {
 
-var events = null;
+	var events = null;
 
 	var constructAddress = function(address) {
+		if(!address || address === "null")
+			return "NA";
 		return utility.handleNullValues(address.address_1)+", "+
-		utility.handleNullValues(address.city)+", "+
-		utility.handleNullValues(address.region);
+				utility.handleNullValues(address.city)+", "+
+				utility.handleNullValues(address.region);
 	}
 
 	var constructDetailsDisplay = function(eventId) {
 		var currentEvent = events[eventId];
 		var startDate = new Date(currentEvent.start.local);
 		var address = currentEvent.venue.address;
-		// var table = "<div class='table'>";
-		// var tableContents = "<div class='row'><div class='cell'> Name </div><div class='cell'>"+utility.handleNullValues(currentEvent.name.text)+"</div></div>"+
-		// 		"<div class='row'><div class='cell'> Organizer </div><div class='cell'> "+utility.handleNullValues(currentEvent.organizer.name)+"</div></div>"+
-		// 		"<div class='row'><div class='cell'> Venue  </div><div class='cell'>"+utility.handleNullValues(address.address_1)+", "+
-		// 																			utility.handleNullValues(address.city)+", "+
-		// 																			utility.handleNullValues(address.region)+
-		// 															"</div></div>"+
-		// 		"<div class='row'><div class='cell'> Start time </div><div class='cell'> "+startDate.toLocaleDateString()+" "+startDate.toLocaleTimeString()+"</div></div>"+
-		// 		"<div class='row'><div class='cell'> Event url </div><div class='cell'> "+utility.handleNullValues(currentEvent.url)+"</div></div>";
-		// return table + tableContents + "</div>";
+		var status = utility.handleNullValues(currentEvent.status);
 
-		return "<p class='event-name'>"+utility.handleNullValues(currentEvent.name.text)+"<br/>"+
-				"<span class='organizer'>Organized by <em>"+utility.handleNullValues(currentEvent.organizer.name)+"</em></span></p>"+
-				"<p> Happening at <em>"+ constructAddress(address) +"</em></p>"+
-				"<p> On <em>"+ startDate.toLocaleDateString()+" "+startDate.toLocaleTimeString() +"</em></p>"+
-				"<p class='urlString'>"+utility.handleNullValues(currentEvent.url)+"</p>";
+		return "<div class='event-name'>"+utility.handleNullValues(currentEvent.name.text)+"<br/>"+
+				"<span class='organizer'>Organized by <em>"+utility.handleNullValues(currentEvent.organizer.name)+"</em></span></div>"+
+				"<p> Venue: <em>"+ constructAddress(address) +"</em></p>"+
+				"<p> On: <em>"+ startDate.toLocaleDateString()+" "+startDate.toLocaleTimeString() +"</em></p>"+
+				"<p> Status: <em>"+ status.charAt(0).toUpperCase() + status.slice(1) +"</em></p>"+
+				"<div class='url-string'><a href='"+utility.handleNullValues(currentEvent.url)+"'>Go to event page</a></div>";
 	};
 
 	return {
-		populateEvents: function(eventObjects, eventIds) {
+		populateEvents: function(eventObjects, eventIds, colors) {
 			events = eventObjects;
 
 			d3.select(".eventList").selectAll("div").remove();
@@ -40,7 +34,7 @@ var events = null;
 			.enter()
 			.append("div")
 			.attr("class", function(eventId){
-				var categoryId = eventObjects[eventId].category_id || 0
+				var categoryId = utility.handleNullCategoryId(eventObjects[eventId].category_id);
 				return "eventDetails category"+categoryId;
 			})
 			.html(function(eventId){
@@ -49,6 +43,11 @@ var events = null;
 				var address = currentEvent.venue.address;
 
 				return  constructDetailsDisplay(eventId);
+			})
+			.select(".event-name")
+			.style("background-color", function(eventId) {
+				var categoryId = utility.handleNullCategoryId(eventObjects[eventId].category_id);
+				return colors(categoryId);
 			});
 		}
 
