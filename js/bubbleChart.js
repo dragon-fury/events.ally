@@ -1,7 +1,7 @@
-var bubbleChart = (function(){
+var bubbleChart = (function() {
 
   var margin = { top: 50, left: 30 },
-      width = 960,
+      width = 760,
       height = 400,
       radius = 33,
       colors = d3.scale.category20(),
@@ -12,6 +12,29 @@ var bubbleChart = (function(){
       .attr("height", height)
       .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  var constructLegend = function(categoryLookUp, legendData) {
+    var legend = svg.selectAll(".legend")
+        .data(legendData)
+        .enter().append("g")
+        .attr("class", "legend");
+
+    legend.append("rect")
+      .attr("x", 0)
+      .attr("y", function(d, i){return i*(legendElementSize+1)})
+      .attr("width", legendElementSize)
+      .attr("height", legendElementSize)
+      .style("fill", function(category, i) { return colors(category.category_id); });
+
+    legend.append("text")
+      .attr("class", "mono axis-workweek")
+      .text(function(category) {
+          category_id = utility.handleNullCategoryId(category.category_id);
+          return categoryLookUp[category_id]; 
+      })
+      .attr("x", 20)
+      .attr("y", function(d,i){return i*(legendElementSize+1)+(legendElementSize/1.5)});
+  };
 
   return {
     renderBubbleChart: function(categoryLookUp, categoryArray) {
@@ -59,26 +82,7 @@ var bubbleChart = (function(){
           .style("text-anchor", "middle")
           .text(function(category) { return category.count; });
 
-      var legend = svg.selectAll(".legend")
-          .data(categoryArray)
-          .enter().append("g")
-          .attr("class", "legend");
-
-      legend.append("rect")
-        .attr("x", 0)
-        .attr("y", function(d, i){return i*(legendElementSize+1)})
-        .attr("width", legendElementSize)
-        .attr("height", legendElementSize)
-        .style("fill", function(category, i) { return colors(category.category_id); });
-
-      legend.append("text")
-        .attr("class", "mono axis-workweek")
-        .text(function(category) {
-            category_id = utility.handleNullCategoryId(category.category_id);
-            return categoryLookUp[category_id]; 
-        })
-        .attr("x", 20)
-        .attr("y", function(d,i){return i*(legendElementSize+1)+(legendElementSize/1.5)});
+      constructLegend(categoryLookUp, categoryArray);
     }
   };
 })();

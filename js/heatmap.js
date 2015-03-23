@@ -67,11 +67,11 @@
             .range(colors);
   };
 
-  var buildCategoryCountsFor = function(hourDay){
+  var buildCategoryCountsFor = function(events){
     var categoryArray = [],
         categoryCount = {};
 
-    hourDay.events.forEach(function(singleEventId){
+    events.forEach(function(singleEventId){
       var category = eventsObject[singleEventId].category_id;
       if(!categoryCount.hasOwnProperty(category))
         categoryCount[category] = 0;
@@ -85,7 +85,7 @@
     return categoryArray;
   };
 
-  d3.json('data.json', function(error, json) {
+  d3.json('data/data.json', function(error, json) {
 
     processEventsData(json);
 
@@ -138,8 +138,11 @@
         .style("fill", function(hourDay) { return colorScale(hourDay.eventsCount); });
 
     heatMap.on("click", function(hourDay) {
-      var categoryArray = buildCategoryCountsFor(hourDay);
+      var eventIdsForHourDay = hourDay.events;
+      var categoryArray = buildCategoryCountsFor(eventIdsForHourDay);
+
       bubbleChart.renderBubbleChart(categories, categoryArray);
+      eventList.populateEvents(eventsObject, eventIdsForHourDay);
     });
 
     heatMap.append("title").text(function(hourDay) { 
