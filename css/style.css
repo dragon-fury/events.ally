@@ -35,16 +35,29 @@ text.axis-worktime {
   height: 430px; 
   width: 750px;
   overflow-y: auto;
-  border: 1px solid #000;
   padding: 5px;
 }
 
 .eventDetails {
   border: 1px inset #000;
   margin-bottom: 4px;
-  padding: 5px;
+  border-radius: 20px;
+  font-size: 15px;
+}
+
+.eventDetails > p {
+  padding-left: 20px;
 }
 
 .hidden {
   display: none;
+}
+
+.event-name {
+  font-size: 17px;
+}
+
+.event-name .organizer {
+  font-size: 12px;
+  color: gray;
 }
