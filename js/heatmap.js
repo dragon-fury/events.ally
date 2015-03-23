@@ -2,7 +2,8 @@
 
   var eventsObject = {},
       events = {},
-      categories = {0: "Unknown"}; // Category to handle null cases in event categories
+      // Category to handle null cases in event categories
+      categories = {0: "Unknown"}; 
 
   var margin = { top: 50, right: 0, bottom: 100, left: 30 },
       width = 960,
@@ -10,19 +11,27 @@
       blockSize = Math.floor((width - margin.left - margin.right) / 24) - 2,
       legendElementWidth = blockSize*2,
       buckets = 5,
-      colors = ["#ffffff","#ffffd9","#edf8b1","#c7e9b4","#7fcdbb","#41b6c4","#1d91c0","#225ea8","#253494","#081d58"],
       colorsForComponents = d3.scale.category20(),
+      colors = ["#ffffff","#ffffd9","#edf8b1","#c7e9b4","#7fcdbb","#41b6c4","#1d91c0","#225ea8","#253494","#081d58"],
       days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
       times = ["12am", "1am", "2am", "3am", "4am", "5am", "6am", "7am", "8am", "9am", "10am", "11am", 
               "12pm", "1pm", "2pm", "3pm", "4pm", "5pm", "6pm", "7pm", "8pm", "9pm", "10pm", "11pm"],
       last = null;
 
+  // Get all categories from Eventbrite API and create dictionary categoryId to name
   categoryCollector.getCategoriesFromApi().done(function(data){
     data.categories.forEach(function(datum, index){
       categories[datum.id] = datum.short_name;
     });
   });
 
+  /* Process events data and create following dictionary for events:
+   * events {
+   *  day : {
+   *    hour : [events]
+   *  }    
+   * }
+  */
   var processEventsData = function(eventsData) {
     eventsData.map(function(element) {
       element.events.map(function(singleEvent){
@@ -140,15 +149,8 @@
         .style("fill", function(hourDay) { return colorScale(hourDay.eventsCount); });
 
     heatMap.on("click", function(hourDay) {
-      if(last) {
-        last.style("stroke", "none");
-      }
-      last = d3.select(this);
-      heatMap.style("opacity", "1.0");
-      if(hourDay.eventsCount > 0)
-        d3.select(this).style("stroke", "black");
-      $(".title").removeClass("hidden");
-      
+      last = utility.highlightAndReturnClickedElement(heatMap, d3.select(this), last, (hourDay.eventsCount > 0))
+
       var eventIdsForHourDay = hourDay.events;
       var categoryArray = buildCategoryCountsFor(eventIdsForHourDay);
 

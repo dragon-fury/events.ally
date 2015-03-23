@@ -3,7 +3,6 @@ rect.bordered {
   stroke-width:2px;   
 }
 
-
 text.mono {
   font-size: 9pt;
   font-family: Consolas, courier;
@@ -16,6 +15,11 @@ text.axis-workweek {
 
 text.axis-worktime {
   fill: #000;
+}
+
+.sponsor {
+  color: #333;
+  font-size: 12px;
 }
 
 .hour:hover {

@@ -8,8 +8,8 @@ var eventList = (function() {
 		return utility.handleNullValues(address.address_1)+", "+
 				utility.handleNullValues(address.city)+", "+
 				utility.handleNullValues(address.region);
-	}
-
+	};
+	
 	var constructDetailsDisplay = function(eventId) {
 		var currentEvent = events[eventId];
 		var startDate = new Date(currentEvent.start.local);
@@ -38,12 +38,9 @@ var eventList = (function() {
 				return "eventDetails category"+categoryId;
 			})
 			.html(function(eventId){
-				var currentEvent = eventObjects[eventId];
-				var startDate = new Date(currentEvent.start.local);
-				var address = currentEvent.venue.address;
-
 				return  constructDetailsDisplay(eventId);
 			})
+			// Background color for event title
 			.select(".event-name")
 			.style("background-color", function(eventId) {
 				var categoryId = utility.handleNullCategoryId(eventObjects[eventId].category_id);

@@ -12,6 +12,20 @@ var utility  = (function() {
 				return "NA";
 			}
 			return givenString;
-		}
+		},
+
+		highlightAndReturnClickedElement: function(parent, currentElement, prevElement, condition) {
+			if(prevElement) {
+			  prevElement.style("stroke", "none");
+			}
+			
+			parent.style("opacity", "1.0");
+			
+			if(condition)
+			  currentElement.style("stroke", "black");
+			$(".title").removeClass("hidden");
+
+			return currentElement;
+		} 
 	};
 })();
