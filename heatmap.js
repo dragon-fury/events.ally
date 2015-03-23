@@ -4,6 +4,17 @@
       events = {},
       categories = {0: "Unknown"}; // Category to handle null cases in event categories
 
+  var margin = { top: 50, right: 0, bottom: 100, left: 30 },
+      width = 960,
+      height = 430 - margin.top - margin.bottom,
+      blockSize = Math.floor((width - margin.left - margin.right) / 24),
+      legendElementWidth = blockSize*2,
+      buckets = 5,
+      colors = ["#ffffff","#ffffd9","#edf8b1","#c7e9b4","#7fcdbb","#41b6c4","#1d91c0","#225ea8","#253494","#081d58"], // alternatively colorbrewer.YlGnBu[9]
+      days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+      times = ["12am", "1am", "2am", "3am", "4am", "5am", "6am", "7am", "8am", "9am", "10am", "11am", 
+              "12pm", "1pm", "2pm", "3pm", "4pm", "5pm", "6pm", "7pm", "8pm", "9pm", "10pm", "11pm"];
+
   categoryCollector.getCategoriesFromApi().done(function(data){
     data.categories.forEach(function(datum, index){
       categories[datum.id] = datum.short_name;
@@ -75,16 +86,6 @@
   };
 
   d3.json('data.json', function(error, json) {
-    
-    var margin = { top: 50, right: 0, bottom: 100, left: 30 },
-        width = 960,
-        height = 430 - margin.top - margin.bottom,
-        blockSize = Math.floor((width - margin.left - margin.right) / 24),
-        legendElementWidth = blockSize*2,
-        buckets = 5,
-        colors = ["#ffffff","#ffffd9","#edf8b1","#c7e9b4","#7fcdbb","#41b6c4","#1d91c0","#225ea8","#253494","#081d58"], // alternatively colorbrewer.YlGnBu[9]
-        days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-        times = ["12am", "1am", "2am", "3am", "4am", "5am", "6am", "7am", "8am", "9am", "10am", "11am", "12pm", "1pm", "2pm", "3pm", "4pm", "5pm", "6pm", "7pm", "8pm", "9pm", "10pm", "11pm"];
 
     processEventsData(json);
 
@@ -92,7 +93,7 @@
 
     var colorScale = getColorScale(data, colors, buckets);
 
-    var svg = d3.select("#chart").append("svg")
+    var svg = d3.select(".heatMap").append("svg")
         .attr("width", width)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
@@ -143,12 +144,14 @@
 
     heatMap.append("title").text(function(hourDay) { 
       if(hourDay.eventsCount > 0)
-        return hourDay.eventsCount + " events";
+        return hourDay.eventsCount + " event(s)";
       return "";
     });
-        
+    
+    var dataForLegend = [0].concat(colorScale.quantiles());
+
     var legend = svg.selectAll(".legend")
-        .data([0].concat(colorScale.quantiles()), function(d) { return d; })
+        .data(dataForLegend)
         .enter().append("g")
         .attr("class", "legend");
 

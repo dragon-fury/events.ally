@@ -1,4 +1,4 @@
-var utilities  = (function() {
+var utility  = (function() {
 	return {
 		handleNullCategoryId: function(categoryId) {
 		  if(categoryId === "null") {

@@ -4,9 +4,10 @@ var bubbleChart = (function(){
       width = 960,
       height = 400,
       radius = 33,
-      colors = d3.scale.category20();
+      colors = d3.scale.category20(),
+      legendElementSize = 14;
 
-  var svg = d3.select(".bubbles").append("svg")
+  var svg = d3.select(".bubbleChart").append("svg")
       .attr("width", width)
       .attr("height", height)
       .append("g")
@@ -19,13 +20,13 @@ var bubbleChart = (function(){
           xTranslate = 100,
           category_id = 0;
 
-      svg.selectAll(".node").remove();
+      svg.selectAll(".bubble").remove();
       svg.selectAll(".legend").remove();
 
-      var node = svg.selectAll(".node")
-          .data(categoryArray)
+      var bubble = svg.selectAll(".bubble")
+        .data(categoryArray)
         .enter().append("g")
-          .attr("class", "node")
+          .attr("class", "bubble")
           .attr("transform", function(d, i) {
             xTranslate += 100;
             // Display only 4 business per line
@@ -36,29 +37,28 @@ var bubbleChart = (function(){
             return "translate(" + xTranslate + ", "+yTranslate+")"; 
           });
 
-      node.append("title")
-          .text(function(d) {
-            category_id = utilities.handleNullCategoryId(d.category_id);
-            return categoryLookUp[category_id] + ": " + d.count; 
+      bubble.append("title")
+          .text(function(category) {
+            category_id = utility.handleNullCategoryId(category.category_id);
+            return categoryLookUp[category_id] + ": " + category.count; 
           });
 
-      node.append("circle")
-          .attr("r", function(d) { return radius; })
-          .style("fill", function(d) { return colors(d.category_id); });
+      bubble.append("circle")
+          .attr("r", radius)
+          .style("fill", function(category) { return colors(category.category_id); });
 
-      node.append("text")
+      bubble.append("text")
           .style("text-anchor", "middle")
-          .text(function(d) { 
-            category_id = utilities.handleNullCategoryId(d.category_id);
+          .text(function(category) { 
+            category_id = utility.handleNullCategoryId(category.category_id);
             return categoryLookUp[category_id].substring(0, 2);
           });
 
-      node.append("text")
+      bubble.append("text")
           .attr("dy", "1.4em")
           .style("text-anchor", "middle")
-          .text(function(d) { return d.count; });
+          .text(function(category) { return category.count; });
 
-      var legendElementSize = 14;
       var legend = svg.selectAll(".legend")
           .data(categoryArray)
           .enter().append("g")
@@ -69,13 +69,14 @@ var bubbleChart = (function(){
         .attr("y", function(d, i){return i*(legendElementSize+1)})
         .attr("width", legendElementSize)
         .attr("height", legendElementSize)
-        .style("fill", function(d, i) { return colors(d.category_id); });
+        .style("fill", function(category, i) { return colors(category.category_id); });
 
       legend.append("text")
         .attr("class", "mono axis-workweek")
-        .text(function(d) {
-            category_id = utilities.handleNullCategoryId(d.category_id);
-            return categoryLookUp[category_id]; })
+        .text(function(category) {
+            category_id = utility.handleNullCategoryId(category.category_id);
+            return categoryLookUp[category_id]; 
+        })
         .attr("x", 20)
         .attr("y", function(d,i){return i*(legendElementSize+1)+(legendElementSize/1.5)});
     }
